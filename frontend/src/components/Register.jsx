@@ -11,20 +11,26 @@ const Register = () => {
     password: "",
     role: "Patient",
   });
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  // Handle input change
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       const { data } = await API.post("/auth/register", form);
-      toast.success("Registered Successfully");
-      navigate("/login"); // Navigate to login after successful registration
+      toast.success("Registered Successfully!");
+      navigate("/login"); // Redirect to login
     } catch (err) {
       toast.error(err.response?.data?.message || "Registration Failed");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -36,30 +42,37 @@ const Register = () => {
         </h2>
 
         <form className="space-y-5" onSubmit={handleSubmit}>
+          {/* Full Name */}
           <div>
             <label className="block text-sm font-medium text-gray-600 mb-1">
               Full Name
             </label>
             <input
               name="name"
+              value={form.name}
               placeholder="Enter your name"
               onChange={handleChange}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
+              required
             />
           </div>
 
+          {/* Username */}
           <div>
             <label className="block text-sm font-medium text-gray-600 mb-1">
               Username
             </label>
             <input
               name="username"
+              value={form.username}
               placeholder="Enter your username"
               onChange={handleChange}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
+              required
             />
           </div>
 
+          {/* Password */}
           <div>
             <label className="block text-sm font-medium text-gray-600 mb-1">
               Password
@@ -67,18 +80,22 @@ const Register = () => {
             <input
               type="password"
               name="password"
+              value={form.password}
               placeholder="Enter your password"
               onChange={handleChange}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
+              required
             />
           </div>
 
+          {/* Role */}
           <div>
             <label className="block text-sm font-medium text-gray-600 mb-1">
               Role
             </label>
             <select
               name="role"
+              value={form.role}
               onChange={handleChange}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
             >
@@ -87,14 +104,19 @@ const Register = () => {
             </select>
           </div>
 
+          {/* Submit Button */}
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white font-semibold py-2.5 rounded-lg shadow-md hover:bg-blue-700 transition duration-200"
+            disabled={loading}
+            className={`w-full bg-blue-600 text-white font-semibold py-2.5 rounded-lg shadow-md hover:bg-blue-700 transition duration-200 ${
+              loading ? "opacity-50 cursor-not-allowed" : ""
+            }`}
           >
-            Register
+            {loading ? "Registering..." : "Register"}
           </button>
         </form>
 
+        {/* Login Link */}
         <p className="text-center text-sm text-gray-500 mt-6">
           Already have an account?{" "}
           <span
